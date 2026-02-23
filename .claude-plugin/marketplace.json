@@ -1,0 +1,23 @@
+{
+  "name": "seedmywallet-skills",
+  "owner": {
+    "name": "Seed My Wallet",
+    "url": "https://seedmywallet.com"
+  },
+  "metadata": {
+    "description": "Skills for using Seed My Wallet—seed Solana devnet wallets with test SPL tokens and empty token accounts. Web app, API, rate limits, integration.",
+    "version": "1.0.0",
+    "repository": "https://github.com/aerosol-xyz/seedmywallet-skills"
+  },
+  "plugins": [
+    {
+      "name": "seedmywallet-skills",
+      "description": "Use Seed My Wallet to populate Solana devnet wallets with test tokens and empty accounts. CLI workflow, web app, API, curl, check-limits, integration examples.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/seed-my-wallet"
+      ]
+    }
+  ]
+}
