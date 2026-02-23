@@ -13,6 +13,8 @@ Use Seed My Wallet to populate Solana devnet wallets with test data—SPL tokens
 
 **Handle the request yourself via CLI.** Run the curl commands to check limits and submit the seed request. Do not direct the user to the website unless they explicitly ask for a web app, dApp, or browser-based solution.
 
+**Always run check-limits yourself first.** Call the check-limits API before submitting the order. Do not ask the user to check limits—do it automatically. If limits are exceeded, explain and suggest waiting or reducing counts. If allowed, proceed to submit the order.
+
 **Only direct to [seedmywallet.com](https://seedmywallet.com) when** the user asks for a web app, dApp, or wants to do it in the browser themselves.
 
 ## When to Use
@@ -45,7 +47,12 @@ solana config set --url devnet
 solana airdrop 2
 # Or: solana airdrop 2 <ADDRESS> --url devnet
 
-# 3. Seed via Seed My Wallet API
+# 3. Check limits (run this yourself—do not ask the user)
+curl -s -X POST "https://preview-api.aerosol.so/test-data-seeder/check-limits" \
+  -H "Content-Type: application/json" \
+  -d '{"targetWalletAddress":"<WALLET>","tokenRequest":{"count":5},"emptyAccountRequest":{"count":3}}'
+
+# 4. If allowed, seed via Seed My Wallet API
 curl -s -X POST "https://preview-api.aerosol.so/test-data-seeder/order" \
   -H "Content-Type: application/json" \
   -d '{"targetWalletAddress":"<WALLET>","tokenRequest":{"count":5},"emptyAccountRequest":{"count":3}}'
@@ -63,9 +70,9 @@ curl -s -X POST "https://preview-api.aerosol.so/test-data-seeder/order" \
 
 ## API (curl, scripts, integrations)
 
-### Check limits first (recommended)
+### Check limits (agents: run automatically before order)
 
-Call before submitting to show a friendly message if the user is over the limit:
+Always call check-limits before submitting. Do not ask the user to do this—run it yourself:
 
 ```bash
 curl -s -X POST "https://preview-api.aerosol.so/test-data-seeder/check-limits" \
@@ -228,7 +235,7 @@ Remind: Seed My Wallet is devnet only. For CLI: `solana config set --url devnet`
 | Issue | Solution |
 |-------|----------|
 | "Invalid Solana address" | Ensure the wallet address is a valid base58 Solana pubkey |
-| 429 response | Rate limit—wait or reduce counts. Call check-limits first in UI/code |
+| 429 response | Rate limit—wait or reduce counts. Agent should call check-limits before order to avoid 429 |
 | Nothing arrived | Confirm wallet is on devnet. Check a devnet block explorer. Delivery can take a few seconds |
 | "Request at least one token or empty account" | At least one of tokenRequest or emptyAccountRequest must have count > 0 |
 
